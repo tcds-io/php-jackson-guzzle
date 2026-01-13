@@ -3,11 +3,11 @@
   "description": "A Guzzle plugin that parses request objects into json and response into objects",
   "type": "library",
   "license": "MIT",
-  "minimum-stability": "dev",
+  "minimum-stability": "stable",
   "require": {
     "php": "^8.4",
     "guzzlehttp/guzzle": "^7.0|^8.0",
-    "tcds-io/php-jackson": "dev-main"
+    "tcds-io/php-jackson": "^1.0.0"
   },
   "autoload": {
     "psr-4": {
@@ -20,6 +20,6 @@
     }
   },
   "require-dev": {
-    "phpunit/phpunit": "^13.0@dev"
+    "phpunit/phpunit": "^12.5"
   }
 }
