@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
 use Tcds\Io\Jackson\Guzzle\JacksonClient;
 use Test\Tcds\Io\Jackson\Guzzle\Fixtures\Address;
 use Test\Tcds\Io\Jackson\Guzzle\Fixtures\AddressCreated;
+use Test\Tcds\Io\Jackson\Guzzle\Fixtures\CreateAddress;
 
 class JacksonClientTest extends TestCase
 {
@@ -23,6 +24,86 @@ class JacksonClientTest extends TestCase
         $this->client = new JacksonClient(
             $this->guzzle = $this->createMock(Client::class),
         );
+    }
+
+    #[Test]
+    public function request_injects_options_from_given_properties(): void
+    {
+        $this->guzzle->expects($this->once())
+            ->method('request')
+            ->with('POST', '/addresses', [
+                RequestOptions::QUERY => [
+                    'id' => '10',
+                ],
+                RequestOptions::JSON => [
+                    'id' => 'aaa-bbb-ccc',
+                    'street' => 'Galaxy Avenue',
+                    'number' => 10,
+                    'main' => true,
+                ],
+                RequestOptions::FORM_PARAMS => [
+                    'street' => 'Galaxy Avenue',
+                    'number' => 10,
+                ],
+            ])
+            ->willReturn(new Response(
+                status: 200,
+                headers: [],
+                body: <<<JSON
+                { "id": "aaa-bbb-ccc" }
+                JSON,
+            ));
+
+        $response = $this->client->request(
+            class: AddressCreated::class,
+            method: 'POST',
+            uri: '/addresses',
+            queryParams: new AddressCreated(id: 10),
+            jsonBody: new Address(id: 'aaa-bbb-ccc', street: 'Galaxy Avenue', number: 10, main: true),
+            formParams: new CreateAddress(street: 'Galaxy Avenue', number: 10),
+        );
+
+        $this->assertEquals(new AddressCreated('aaa-bbb-ccc'), $response);
+    }
+
+    #[Test]
+    public function request_async_injects_options_from_given_properties(): void
+    {
+        $this->guzzle->expects($this->once())
+            ->method('request')
+            ->with('POST', '/addresses', [
+                RequestOptions::QUERY => [
+                    'street' => 'Galaxy Avenue',
+                    'number' => 10,
+                ],
+                RequestOptions::JSON => [
+                    'id' => '10',
+                ],
+                RequestOptions::FORM_PARAMS => [
+                    'id' => 'aaa-bbb-ccc',
+                    'street' => 'Galaxy Avenue',
+                    'number' => 10,
+                    'main' => true,
+                ],
+            ])
+            ->willReturn(new Response(
+                status: 200,
+                headers: [],
+                body: <<<JSON
+                { "id": "aaa-bbb-ccc" }
+                JSON,
+            ));
+
+        $response = $this->client->request(
+            class: AddressCreated::class,
+            method: 'POST',
+            uri: '/addresses',
+            queryParams: new CreateAddress(street: 'Galaxy Avenue', number: 10),
+            jsonBody: new AddressCreated(id: 10),
+            formParams: new Address(id: 'aaa-bbb-ccc', street: 'Galaxy Avenue', number: 10, main: true),
+        );
+
+        $this->assertEquals(new AddressCreated('aaa-bbb-ccc'), $response);
     }
 
     #[Test]
