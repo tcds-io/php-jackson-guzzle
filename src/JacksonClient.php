@@ -263,15 +263,15 @@ final readonly class JacksonClient
         mixed $jsonBody,
         mixed $formParams,
     ): array {
-        if ($formParams != null && !isset($options[RequestOptions::FORM_PARAMS])) {
+        if ($formParams !== null && !isset($options[RequestOptions::FORM_PARAMS])) {
             $options[RequestOptions::FORM_PARAMS] = $this->arrayMapper->writeValue($formParams);
         }
 
-        if ($jsonBody != null && !isset($options[RequestOptions::JSON])) {
+        if ($jsonBody !== null && !isset($options[RequestOptions::JSON])) {
             $options[RequestOptions::JSON] = $this->arrayMapper->writeValue($jsonBody);
         }
 
-        if ($queryParams != null && !isset($options[RequestOptions::QUERY])) {
+        if ($queryParams !== null && !isset($options[RequestOptions::QUERY])) {
             $options[RequestOptions::QUERY] = $this->arrayMapper->writeValue($queryParams);
         }
 
