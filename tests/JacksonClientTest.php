@@ -67,6 +67,36 @@ class JacksonClientTest extends TestCase
     }
 
     #[Test]
+    public function request_injects_empty_payload_options(): void
+    {
+        $this->guzzle->expects($this->once())
+            ->method('request')
+            ->with('POST', '/addresses', [
+                RequestOptions::QUERY => [],
+                RequestOptions::JSON => [],
+                RequestOptions::FORM_PARAMS => [],
+            ])
+            ->willReturn(new Response(
+                status: 200,
+                headers: [],
+                body: <<<JSON
+                { "id": "aaa-bbb-ccc" }
+                JSON,
+            ));
+
+        $response = $this->client->request(
+            class: AddressCreated::class,
+            method: 'POST',
+            uri: '/addresses',
+            queryParams: [],
+            jsonBody: [],
+            formParams: [],
+        );
+
+        $this->assertEquals(new AddressCreated('aaa-bbb-ccc'), $response);
+    }
+
+    #[Test]
     public function request_async_injects_options_from_given_properties(): void
     {
         $this->guzzle->expects($this->once())
