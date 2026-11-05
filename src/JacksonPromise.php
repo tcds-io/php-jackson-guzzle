@@ -43,7 +43,7 @@ readonly class JacksonPromise implements PromiseInterface
         return $this->original->getState();
     }
 
-    public function resolve($value): void
+    public function resolve($value = null): void
     {
         $this->original->resolve($value);
     }
